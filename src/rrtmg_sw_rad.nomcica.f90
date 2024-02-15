@@ -85,7 +85,9 @@
              taucld  ,ssacld  ,asmcld  ,fsfcld  , &
              cicewp  ,cliqwp  ,reice   ,reliq   , &
              tauaer  ,ssaaer  ,asmaer  ,ecaer   , &
-             swuflx  ,swdflx  ,swhr    ,swuflxc ,swdflxc ,swhrc)
+             swuflx  ,swdflx  ,swhr    ,swuflxc ,swdflxc ,swhrc, &
+             ! Optional I/O
+             swdirdflx)
 
 ! ------- Description -------
 
@@ -287,6 +289,10 @@
                                                       !    Dimensions: (ncol,nlay+1)
       real(kind=rb), intent(out) :: swhrc(:,:)        ! Clear sky shortwave radiative heating rate (K/d)
                                                       !    Dimensions: (ncol,nlay)
+! ----- Optional Output -----
+
+      real(kind=rb), intent(out), optional :: swdirdflx(:,:)       ! Direct sky shortwave downward flux (W/m2)
+                                                                   !    Dimensions: (ncol,nlay+1)
 
 ! ----- Local -----
 
@@ -688,6 +694,13 @@
             dirdnir(i) = znifddir(i)
             difdnir(i) = znifd(i) - dirdnir(i)
          enddo
+
+!  Output direct downward flux
+         if (present(swdirdflx)) then
+            do i = 1, nlayers+1
+               swdirdflx(iplon,i) = dirdflux(i)
+            enddo
+         endif
 
 !  Total and clear sky net fluxes
          do i = 1, nlayers+1
